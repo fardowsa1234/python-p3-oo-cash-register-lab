@@ -117,3 +117,31 @@ class TestCashRegister:
       assert(self.cash_register.total == 0.0)
       self.reset_register_totals()
       
+      
+import pytest
+from cash_register import CashRegister
+
+class TestCashRegister:
+    def setup_method(self):
+        self.cash_register_with_discount = CashRegister(20)
+        self.cash_register_without_discount = CashRegister()
+
+    def test_initial_total(self):
+        assert self.cash_register_with_discount.total == 0
+        assert self.cash_register_without_discount.total == 0
+
+    def test_add_item(self):
+        self.cash_register_with_discount.add_item("Banana", 1.5, 2)
+        assert self.cash_register_with_discount.total == 3.0
+        assert len(self.cash_register_with_discount.items) == 2
+
+    def test_apply_discount(self):
+        self.cash_register_with_discount.add_item("Banana", 1.5, 2)
+        self.cash_register_with_discount.apply_discount()
+        assert round(self.cash_register_with_discount.total, 2) == 2.4  # 20% off 3.0
+
+    def test_void_last_transaction(self):
+        self.cash_register_with_discount.add_item("Banana", 1.5, 2)
+        self.cash_register_with_discount.void_last_transaction()
+        assert round(self.cash_register_with_discount.total, 2) == 0.0
+        assert len(self.cash_register_with_discount.items) == 0
